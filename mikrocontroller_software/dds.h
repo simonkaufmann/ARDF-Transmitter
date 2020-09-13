@@ -40,7 +40,7 @@
  * macros
  */
 #define FREQ_TO_FTW(freq) ((uint32_t)(((double)freq/(dds_get_crystal_frequency()\
-					      *DDS_FREQ_MULTIPLIER))*(0xFFFFFFFFUL)))
+					      *DDS_FREQ_MULTIPLIER))*(0xFFFFFFFFUL)))	/* deprecated */
 						  /* 0xFFFFFFFF is 2 to the power of 32 */
 #define FTW_TO_FREQ(ftw)  ((uint32_t)(((double)ftw/(0xFFFFFFFFUL)*\
 						  (dds_get_crystal_frequency()*DDS_FREQ_MULTIPLIER))))

@@ -103,8 +103,38 @@ static uint8_t continuous_carrier = CONTINUOUS_CARRIER_OFF;
 /**
  * wait_spi - wait until SPI transmit is ready
  */
-static inline void wait_spi(void)	{
+static inline void wait_spi(void)
+{
 	while ((SPSR & (1 << SPIF)) == 0);
+}
+
+static void dds_disable_power_amplifier()
+{
+#ifdef NEW_PROTOTYPE
+	/* turn off the amplifier */
+	PA_PORT &= ~(1 << PA_80M);
+	PA_PORT &= ~(1 << PA_2M);
+#endif
+}
+
+/**
+ * dds_enable_power_amplifier - turn on power amplifier 80m/2m
+ *
+ *		Either 80m or 2m power amplifier is activated depending
+ *		on configuration setting	
+ */
+static void dds_enable_power_amplifier()
+{
+#ifdef NEW_PROTOTYPE
+	/* turn on the amplifier */
+	if (dds_get_frequency() > DDS_FREQ_2M_80M_LIMIT)	{
+		PA_PORT &= ~(1 << PA_80M);
+		PA_PORT |= (1 << PA_2M);
+	} else {
+		PA_PORT &= ~(1 << PA_2M);
+		PA_PORT |= (1 << PA_80M);
+	}
+#endif
 }
 
 /**
@@ -366,6 +396,7 @@ static inline uint8_t dds_write_amplitude_isr(uint8_t byte1, uint8_t byte0)
 static void dds_disable_continuous_carrier_int(void)
 {
 	morse_disable_continuous_carrier();
+	dds_powerdown();
 	continuous_carrier = CONTINUOUS_CARRIER_OFF;
 }
 
@@ -388,6 +419,10 @@ void dds_init()
 	DDS_PORT |= (1 << DDS_CS) | (1 << DDS_MODULATION_CS);
 	DDS_DDR  |= (1 << DDS_CS) | (1 << DDS_IO_UPDATE) | (1 << DDS_MODULATION_CS) |
 			(1 << DDS_IOSYNC) | (1 << DDS_MOSI) | (1 << DDS_SCK)| (1 << DDS_RESET);
+
+	/* set power amplifier pins to output */
+	PA_PORT &= ~((1 << PA_80M) | (1 << PA_2M));
+	PA_DDR |= (1 << PA_80M) | (1 << PA_2M);
 
 	/* perform a reset */
 	DDS_PORT |= (1 << DDS_RESET);
@@ -468,19 +503,6 @@ void dds_show_configuration(void)
 void dds_load_configuration(void)
 {
 	dds_disable_continuous_carrier_int();
-
-#ifdef NEW_PROTOTYPE
-	/* turn on the amplifier */
-	if (dds_get_frequency() > DDS_FREQ_2M_80M_LIMIT)	{
-		PA_PORT &= ~(1 << PA_80M);
-		PA_PORT |= (1 << PA_2M);
-	} else {
-		PA_PORT &= ~(1 << PA_2M);
-		PA_PORT |= (1 << PA_80M);
-	}
-	PA_DDR |= (1 << PA_80M) | (1 << PA_2M);
-#endif
-
 
 	/* access frequency tuning word register */
 	dds_write_output_ftw(dds_get_ftw());
@@ -703,6 +725,7 @@ void dds_powerdown(void)
 	dds_read_register(DDS_CFR1, data, 4);
 	data[0] |= (1 << DDS_DIGITAL_POWER_DOWN) | (1 << DDS_DAC_POWER_DOWN) | (1 << DDS_CLOCK_INPUT_POWER_DOWN);
 	dds_write_register(DDS_CFR1, data, 4);
+	dds_disable_power_amplifier();
 }
 
 /**
@@ -714,7 +737,7 @@ void dds_powerup(void)
 	dds_read_register(DDS_CFR1, data, 4);
 	data[0] |= (1 << DDS_DIGITAL_POWER_DOWN) | (1 << DDS_DAC_POWER_DOWN) | (1 << DDS_CLOCK_INPUT_POWER_DOWN);
 	dds_write_register(DDS_CFR1, data, 4);
-	_delay_ms(1);
+	dds_enable_power_amplifier();
 }
 
 /**
@@ -722,6 +745,7 @@ void dds_powerup(void)
  */
 void dds_enable_continuous_carrier_2m(void)
 {
+	dds_powerup();
 	PA_PORT &= ~(1 << PA_80M);
 	PA_PORT |= (1 << PA_2M);
 	dds_write_output_ftw(FREQ_TO_FTW(DDS_DEFAULT_FREQUENCY_2M));
@@ -736,6 +760,7 @@ void dds_enable_continuous_carrier_2m(void)
  */
 void dds_enable_continuous_carrier_80m(void)
 {
+	dds_powerup();
 	PA_PORT &= ~(1 << PA_2M);
 	PA_PORT |= (1 << PA_80M);
 	dds_write_output_ftw(FREQ_TO_FTW(DDS_DEFAULT_FREQUENCY_80M));

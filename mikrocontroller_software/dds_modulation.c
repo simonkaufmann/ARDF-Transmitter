@@ -28,7 +28,7 @@
 #include "SPI.h"
 
 #define MODULATION_FREQUENCY	600
-#define FREQ_TO_FTW(freq)		((uint32_t) ((double)freq / (dds_get_crystal_frequency()) * 0x10000000UL))
+#define FREQ_TO_FTW_MODULATION(freq)		((uint32_t) ((double)freq / (dds_get_crystal_frequency()) * 0x10000000UL))
 
 /*
  * modulation dds register addresses
@@ -72,7 +72,7 @@ static uint8_t dds_modulation_write_register(uint8_t byte_1, uint8_t byte_0)
 static uint8_t dds_modulation_set_frequency(uint32_t frequency) {
 	uint8_t b0 = 0x00, b1 = 0x00; 
 
-	uint32_t ftw = FREQ_TO_FTW(frequency);
+	uint32_t ftw = FREQ_TO_FTW_MODULATION(frequency);
 	// Write freqency tuning word 
 	// FTW needs to be 6442 to result in approx 600Hz modulation freq at 25MHz clock
 	// This means: 0 in the upper 14-bit part, and 6442 in the lower 14-bit part (192A)
