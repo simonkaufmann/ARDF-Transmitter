@@ -27,6 +27,7 @@
 
 #include "pins.h"
 #include "dds.h"
+#include "dds_modulation.h"
 #include "rtc.h"
 #include "uart.h"
 #include "utils.h"
@@ -101,6 +102,8 @@ static void reload_int(void)
 	rtc_init();
 
 	dds_init();
+
+	dds_modulation_init();
 
 	morse_init(); /* needs dds */
 	startup_init(); /* startup needs rtc, morese and dds*/

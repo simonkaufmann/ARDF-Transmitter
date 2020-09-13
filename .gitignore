@@ -1,0 +1,9 @@
+mikrocontroller_software/.dep
+*.o
+*.lst
+*.hex
+*.map
+*.lss
+*.sym
+*.eep
+*.elf

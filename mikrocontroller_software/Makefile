@@ -80,7 +80,7 @@ OBJDIR = .
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(TARGET).c uart.c rtc.c twi.c utils.c dds.c commands.c startup.c morse.c Arduino.c SPI.c MFRC522.c rfid.c ext_eeprom.c user.c
+SRC = $(TARGET).c uart.c rtc.c twi.c utils.c dds.c commands.c startup.c morse.c Arduino.c SPI.c MFRC522.c rfid.c ext_eeprom.c user.c dds_modulation.c
 
 
 # List C++ source files here. (C dependencies are automatically generated.)

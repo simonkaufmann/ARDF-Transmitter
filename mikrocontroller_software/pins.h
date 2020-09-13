@@ -24,7 +24,7 @@
 
 #define DDS_PORT			PORTB
 #define DDS_DDR				DDRB
-#define DDS_MOD_CS		PB3
+#define DDS_MODULATION_CS	PB3
 #define DDS_IO_UPDATE		PB2
 #define DDS_IOSYNC			PB1
 #define DDS_CS				PB4
