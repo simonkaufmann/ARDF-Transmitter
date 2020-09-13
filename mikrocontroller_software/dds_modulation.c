@@ -27,6 +27,9 @@
 #include "pins.h"
 #include "SPI.h"
 
+#define MODULATION_FREQUENCY	600
+#define FREQ_TO_FTW(freq)		((uint32_t) ((double)freq / (dds_get_crystal_frequency()) * 0x10000000UL))
+
 /*
  * modulation dds register addresses
  */
@@ -66,6 +69,26 @@ static uint8_t dds_modulation_write_register(uint8_t byte_1, uint8_t byte_0)
 	return TRUE; 
 }
 
+static uint8_t dds_modulation_set_frequency(uint32_t frequency) {
+	uint8_t b0 = 0x00, b1 = 0x00; 
+
+	uint32_t ftw = FREQ_TO_FTW(frequency);
+	// Write freqency tuning word 
+	// FTW needs to be 6442 to result in approx 600Hz modulation freq at 25MHz clock
+	// This means: 0 in the upper 14-bit part, and 6442 in the lower 14-bit part (192A)
+	// Writing lower part of FTW: 
+	b1 = (1 << 6) | ((ftw >> 8) & 0x3f); // means 25 in the upper bits
+	b0 = ftw & 0xff;
+	dds_modulation_write_register(b1, b0);
+		
+	// Writing upper part of FTW: 
+	b1 = (1 << 6) | ((ftw >> 22) & 0x3f);
+	b0 = (ftw >> 14) & 0xff;
+	dds_modulation_write_register(b1, b0);  
+
+	return TRUE;	
+}
+
 static uint8_t dds_modulation_test_on(void)
 {
 		uint8_t b0 = 0x00, b1 = 0x00; 
@@ -81,19 +104,8 @@ static uint8_t dds_modulation_test_on(void)
 		b0 = 0x00; // No sleeping etc. here
 		dds_modulation_write_register(b1, b0); 
 			  
-		// Write freqency tuning word 
-		// FTW needs to be 6442 to result in approx 600Hz modulation freq at 25MHz clock
-		// This means: 0 in the upper 14-bit part, and 6442 in the lower 14-bit part (192A)
-		// Writing lower part of FTW: 
-		b1 = (1<<6) | 0x19; // means 25 in the upper bits
-		b0 = 0x2A; // means 42 in the lower bits
-		dds_modulation_write_register(b1, b0);
-		 
-		// Writing upper part of FTW: 
-		b1 = (1<<6); 
-		b0 = 0x00; 
-		dds_modulation_write_register(b1, b0);  
-		
+		dds_modulation_set_frequency(MODULATION_FREQUENCY);
+
 		// Write 0 to the phase register (phase does not matter here)
 		b1 = (1<<7)|(1<<6); 
 		b0 = 0x00; 
@@ -120,6 +132,7 @@ static uint8_t dds_modulation_test_off(void)
 		// Write control regs with reset on (1)
 		b1 = (1<<(MOD_B28-8))|(1<<(MOD_RESET-8));
 		b0 = (1<<MOD_SLEEP1)|(1<<MOD_SLEEP12); // Clock disabled and DAC disabled
+	
 		dds_modulation_write_register(b1, b0);
 
 		// Restore old SPI settings

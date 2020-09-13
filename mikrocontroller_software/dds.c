@@ -64,7 +64,7 @@
 
 #define SIN_VALUES			10
 
-#define MODULATION_FREQUENCY	600
+#define MODULATION_FREQUENCY	600 /* deprecated */
 #define TIMER0_OVERFLOW_NUMBER	6
 #define TIMER0_OVERFLOW_SET_SPI_OFF 1 /* after so many overflows set spi to off so that rfid library will not send any more */
 #define TIMER0_PRELOAD			(256 - F_CPU / 8 / (MODULATION_FREQUENCY * SIN_VALUES) / TIMER0_OVERFLOW_NUMBER + 6) /* + 6 because of deviation because of cycles lost before setting the preload value -> depends on TIMER0_OVERFLOW_NUMBER and SIN_VALUES */
