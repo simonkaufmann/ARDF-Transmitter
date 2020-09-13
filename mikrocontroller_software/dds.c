@@ -41,6 +41,20 @@
 #define DDS_FTW0			0x04 /* frequency tuning word */
 #define DDS_POW0			0x05 /* phase offset word */
 
+
+/*
+ * modulation dds register addresses
+ */
+#define MOD_B28         13      // needs to be at 1 to write high and low FTW at once
+#define MOD_FSELECT     11      // we only use FREG0
+#define MOD_PSELECT     10      // we only use PREG0
+#define MOD_RESET       8       // device is held in reset when reset = 1
+#define MOD_SLEEP1      7       // needs to be at 0 to be active
+#define MOD_SLEEP12     6       // same here
+#define MOD_OPBITEN     5       // needs to be 0, otherwise it will bypass the DAC and output square
+#define MOD_MODE        1       // needs to be 0 to output sinusoidal waveform
+
+ 
 /*
  * define bits in DDS registers
  */
@@ -146,6 +160,109 @@ static uint8_t dds_write_register(int8_t register_address, const int8_t *data, i
 
 	return TRUE;
 }
+
+
+/**
+ * AD9833 MODULATION STUFF here
+ JUST FOR TESTING PURPOSES!
+ 
+ Information is from application note AN-1070 from Analog Devices: 
+ https://www.analog.com/media/en/technical-documentation/application-notes/AN-1070.pdf
+ 
+ */
+
+
+static uint8_t dds_mod_write_register(uint8_t byte_1, uint8_t byte_0)
+{
+	if (SPI_is_free() == FALSE)	{
+		return FALSE;
+	}
+
+	DDS_PORT &= ~(1 << DDS_MOD_CS);
+	SPDR = byte_1;
+	wait_spi();
+        SPDR = byte_0;
+        wait_spi(); 
+	DDS_PORT |= (1 << DDS_MOD_CS);
+	
+	return TRUE; 
+}
+
+/* Copied here that I do not need to scroll all the time...
+#define MOD_B28         13      // needs to be at 1 to write high and low FTW at once
+#define MOD_FSELECT     11      // we only use FREG0
+#define MOD_PSELECT     10      // we only use PREG0
+#define MOD_RESET       8       // device is held in reset when reset = 1
+#define MOD_SLEEP1      7       // needs to be at 0 to be active
+#define MOD_SLEEP12     6       // same here
+#define MOD_OPBITEN     5       // needs to be 0, otherwise it will bypass the DAC and output square
+#define MOD_MODE        1       // needs to be 0 to output sinusoidal waveform
+*/
+static uint8_t dds_mod_test_on(void)
+{
+        uint8_t b0 = 0x00, b1 = 0x00; 
+
+        // Needs other SPI settings
+        // these are: SPI Clock needs to be high in idle, data is read on the falling edge, shifted out on the rising edge
+        // In AVR-terms, this means: CPOL = 1, CPHA = 0. 
+        // The standard setting (clock idle low, data read on rising) does not work!
+	SPCR |= (1 << SPE) | (1 << MSTR) | (1 << CPOL);
+	
+        // Write control regs with reset on (1)
+        b1 = (1<<(MOD_B28-8))|(1<<(MOD_RESET-8));
+        b0 = 0x00; // No sleeping etc. here
+        dds_mod_write_register(b1, b0); 
+              
+        // Write freqency tuning word 
+        // FTW needs to be 6442 to result in approx 600Hz modulation freq at 25MHz clock
+        // This means: 0 in the upper 14-bit part, and 6442 in the lower 14-bit part (192A)
+        // Writing lower part of FTW: 
+        b1 = (1<<6) | 0x19; // means 25 in the upper bits
+        b0 = 0x2A; // means 42 in the lower bits
+        dds_mod_write_register(b1, b0);
+         
+        // Writing upper part of FTW: 
+        b1 = (1<<6); 
+        b0 = 0x00; 
+        dds_mod_write_register(b1, b0);  
+        
+        // Write 0 to the phase register (phase does not matter here)
+        b1 = (1<<7)|(1<<6); 
+        b0 = 0x00; 
+        dds_mod_write_register(b1, b0);  
+        
+        // Disable reset (0)
+        b1 = (1<<(MOD_B28-8));
+        b0 = 0x00; // All set to 0 here
+        dds_mod_write_register(b1, b0); 
+        
+        // Restore old SPI settings
+        SPCR |= (1 << SPE) | (1 << MSTR);
+        
+	return TRUE;
+}
+
+static uint8_t dds_mod_test_off(void)
+{
+        uint8_t b0 = 0x00, b1 = 0x00; 
+
+        // Needs other SPI settings (see dds_mod_test_on())
+	SPCR |= (1 << SPE) | (1 << MSTR) | (1 << CPOL);
+
+	// Write control regs with reset on (1)
+        b1 = (1<<(MOD_B28-8))|(1<<(MOD_RESET-8));
+        b0 = (1<<MOD_SLEEP1)|(1<<MOD_SLEEP12); // Clock disabled and DAC disabled
+        dds_mod_write_register(b1, b0);
+
+        // Restore old SPI settings
+        SPCR |= (1 << SPE) | (1 << MSTR);
+        
+	return TRUE;
+}
+
+/*
+        END OF MODULATION STUFF HERE
+*/
 
 /**
  * dds_read_register - read a dds register
@@ -376,9 +493,9 @@ void dds_init()
 	TCCR0B |= (1 << CS01); /* switch on timer0 with prescaler = 8 */
 	TIMSK0 &= ~(1 << TOIE0); /* disable timer interrupt because there must not be sent anything while dds is getting configured! */
 
-	DDS_PORT &= ~((1 << DDS_PWRDWNCTL) | (DDS_IOSYNC) | (1 << DDS_IO_UPDATE));
-	DDS_PORT |= (1 << DDS_CS);
-	DDS_DDR  |= (1 << DDS_CS) | (1 << DDS_PWRDWNCTL) | (1 << DDS_IO_UPDATE) |
+	DDS_PORT &= ~((DDS_IOSYNC) | (1 << DDS_IO_UPDATE));
+	DDS_PORT |= (1 << DDS_CS)|(1 << DDS_MOD_CS);
+	DDS_DDR  |= (1 << DDS_CS) | (1 << DDS_MOD_CS) | (1 << DDS_IO_UPDATE) |
 		   (1 << DDS_IOSYNC) | (1 << DDS_MOSI) | (1 << DDS_SCK)| (1 << DDS_RESET);
 
 	/* perform a reset */
@@ -407,13 +524,16 @@ void dds_init()
 
 	/* access configuration register 2 */
 	data[0] = 0x00;
-	data[1] = 0x00;
+	data[1] = 0x00 | (1<<1); // crystal-out enable-bit for modulation - DDS
 	data[2] = DDS_FREQ_MULTIPLIER << 3; /* clock multiplier to 20 */
 
 	dds_write_register(DDS_CFR2, data, 3);
 	dds_io_update();
 
 	dds_off();
+	
+	// The modulation-dds is off by default
+	dds_mod_test_off();  
 
 	dds_load_configuration();
 }
@@ -488,7 +608,11 @@ void dds_load_configuration(void)
 	dds_write_amplitude(dds_get_amplitude());
 
 	dds_io_update();
-	current_modulation = dds_get_modulation();
+	//current_modulation = dds_get_modulation(); // We do not activate classic modulation here but new modulation instead
+	if (dds_get_modulation()==TRUE)
+	{
+		dds_mod_test_on(); 
+	}
 }
 
 /**
@@ -690,7 +814,7 @@ void dds_execute_command_buffer()
  */
 void dds_powerdown(void)
 {
-	DDS_PORT |= (1 << DDS_PWRDWNCTL);
+	//DDS_PORT |= (1 << DDS_PWRDWNCTL);
 }
 
 /**
@@ -698,7 +822,7 @@ void dds_powerdown(void)
  */
 void dds_powerup(void)
 {
-	DDS_PORT &= ~(1 << DDS_PWRDWNCTL);
+	//DDS_PORT &= ~(1 << DDS_PWRDWNCTL);
 }
 
 /**

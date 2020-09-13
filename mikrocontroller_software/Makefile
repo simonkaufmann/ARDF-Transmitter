@@ -465,7 +465,7 @@ program: $(TARGET).hex $(TARGET).eep 3V_umschalten
 	$(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH) $(AVRDUDE_WRITE_EEPROM)
 
 3V_umschalten:
-	./3v $(AVRDUDE_PORT)
+	@echo cat ./3v >> $(AVRDUDE_PORT)
 
 
 # Generate avr-gdb config/init file which does the following:
