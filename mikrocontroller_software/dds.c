@@ -51,6 +51,10 @@
 #define DDS_AUTO_OSK_KEYING	0
 /* DDS_CFR1 byte 1 */
 #define DDS_SDIO_INPUT_ONLY		1
+/* DDS_CFR0 byte 0 */
+#define DDS_DIGITAL_POWER_DOWN		7
+#define DDS_DAC_POWER_DOWN			5
+#define DDS_CLOCK_INPUT_POWER_DOWN	4
 /* DDS_CFR2 byte 1 */
 #define DDS_CRYSTAL_OUT_ACTIVE	1
 
@@ -695,7 +699,10 @@ void dds_execute_command_buffer()
  */
 void dds_powerdown(void)
 {
-	//DDS_PORT |= (1 << DDS_PWRDWNCTL);
+	int data[4];
+	dds_read_register(DDS_CFR1, data, 4);
+	data[0] |= (1 << DDS_DIGITAL_POWER_DOWN) | (1 << DDS_DAC_POWER_DOWN) | (1 << DDS_CLOCK_INPUT_POWER_DOWN);
+	dds_write_register(DDS_CFR1, data, 4);
 }
 
 /**
@@ -703,7 +710,11 @@ void dds_powerdown(void)
  */
 void dds_powerup(void)
 {
-	//DDS_PORT &= ~(1 << DDS_PWRDWNCTL);
+	int data[4];
+	dds_read_register(DDS_CFR1, data, 4);
+	data[0] |= (1 << DDS_DIGITAL_POWER_DOWN) | (1 << DDS_DAC_POWER_DOWN) | (1 << DDS_CLOCK_INPUT_POWER_DOWN);
+	dds_write_register(DDS_CFR1, data, 4);
+	_delay_ms(1);
 }
 
 /**
