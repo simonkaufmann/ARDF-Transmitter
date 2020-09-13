@@ -73,11 +73,7 @@ static void led_bar_set(uint8_t val)
 {
 #ifdef NEW_PROTOTYPE
 	while (SPI_is_free() == FALSE);
-	uint8_t i, temp = 0x00;
-	for (i = 0; i < val; i++)	{
-		temp = temp >> 1;
-		temp |= 0x80;
-	}
+	uint8_t i, temp = (1 << (8 - val));
 	LED_BAR_PORT &= ~(1 << LED_BAR_CE);
 	SPDR = temp;
 	while ((SPSR & (1 << SPIF)) == 0);
