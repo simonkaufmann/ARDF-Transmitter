@@ -438,8 +438,7 @@ void dds_init()
 	SPSR |= (1 << SPI2X);
 
 	int8_t data[4];
-	dds_powerdown();
-	while(1);
+
 	/* access configuratin register 1 */
 	data[0] = (1 << DDS_OSK_ENABLE); //| (1 << DDS_AUTO_OSK_KEYING);
 	data[1] = 0x00;
@@ -448,7 +447,8 @@ void dds_init()
 
 	dds_write_register(DDS_CFR1, data, 4);
 	dds_io_update();
-
+	dds_powerdown();
+	while(1);
 	/* access configuration register 2 */
 	data[0] = 0x00;
 	data[1] = 0x00 | (1 << DDS_CRYSTAL_OUT_ACTIVE);
