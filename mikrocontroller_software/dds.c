@@ -458,6 +458,8 @@ void dds_init()
 
 	dds_off();
 
+	dds_powerdown();
+
 	dds_load_configuration();
 }
 

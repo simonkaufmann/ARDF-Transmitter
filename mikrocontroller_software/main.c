@@ -206,6 +206,9 @@ int main(void)
 	uart_init();
 	commands_print_welcome_message();
 
+	dds_powerdown();
+	while(1);
+
 	twi_init();
 
 	rtc_init();
@@ -213,7 +216,6 @@ int main(void)
 	rtc_start_oscillator();
 
 	dds_init();
-	dds_powerdown();
 	morse_init(); /* needs dds */
 	startup_init(); /* startup needs rtc, morese and dds*/
 	user_init();
