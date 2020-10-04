@@ -436,8 +436,7 @@ void dds_init()
 	 */
 	SPCR |= (1 << SPE) | (1 << MSTR);
 	SPSR |= (1 << SPI2X);
-	dds_powerdown();
-	while(1);
+
 	int8_t data[4];
 
 	/* access configuratin register 1 */
@@ -458,6 +457,9 @@ void dds_init()
 	dds_io_update();
 
 	dds_off();
+	
+	dds_powerdown();
+	while(1);
 
 	dds_load_configuration();
 }
