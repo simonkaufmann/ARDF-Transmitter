@@ -848,10 +848,12 @@ ISR(INT1_vect)
 	uint8_t flag, ret;
 	ret = rtc_get_alarm0_interrupt_flag(&flag);
 	if (ret == TWI_OK && flag > 0)	{
+		uart_send_text_sram("startup interrupt\n");
 		startup_interrupt();
 	}
 	ret = rtc_get_alarm1_interrupt_flag(&flag);
 	if (ret == TWI_OK && flag > 0)	{
+		uart_send_text_sram("morse interrup\n");
 		morse_interrupt();
 	}
 	rtc_clear_alarm0_interrupt_flag();
