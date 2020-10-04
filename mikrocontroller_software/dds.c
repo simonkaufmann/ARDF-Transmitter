@@ -745,7 +745,7 @@ void dds_powerup(void)
 	dds_write_register(DDS_CFR1, data, 4);
 	dds_io_update();
 
-	_delay_ms(2);
+	//_delay_ms(2);
 
 	dds_enable_power_amplifier();
 }
