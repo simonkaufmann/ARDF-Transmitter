@@ -411,6 +411,8 @@ static void dds_disable_continuous_carrier_int(void)
  */
 void dds_init()
 {
+	dds_powerdown();
+	while(1);
 	/* timer configuration for modulation */
 	TCCR0B |= (1 << CS01); /* switch on timer0 with prescaler = 8 */
 	TIMSK0 &= ~(1 << TOIE0); /* disable timer interrupt because there must not be sent anything while dds is getting configured! */
