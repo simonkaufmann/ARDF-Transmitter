@@ -212,10 +212,9 @@ int main(void)
 
 	rtc_start_oscillator();
 
+	dds_init();
 	dds_powerdown();
 	while(1);
-
-	dds_init();
 	morse_init(); /* needs dds */
 	startup_init(); /* startup needs rtc, morese and dds*/
 	user_init();
