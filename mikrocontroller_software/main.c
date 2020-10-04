@@ -213,7 +213,7 @@ int main(void)
 	rtc_start_oscillator();
 
 	dds_init();
-	morse_init(); /* needs dds */
+	//morse_init(); /* needs dds */
 	dds_powerdown();
 	while(1);
 	startup_init(); /* startup needs rtc, morese and dds*/
