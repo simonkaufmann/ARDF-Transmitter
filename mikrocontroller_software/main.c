@@ -213,9 +213,9 @@ int main(void)
 	rtc_start_oscillator();
 
 	dds_init();
+	morse_init(); /* needs dds */
 	dds_powerdown();
 	while(1);
-	morse_init(); /* needs dds */
 	startup_init(); /* startup needs rtc, morese and dds*/
 	user_init();
 	rfid_init();
