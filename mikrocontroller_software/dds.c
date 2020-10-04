@@ -449,6 +449,7 @@ void dds_init()
 	dds_io_update();
 
 	dds_powerdown();
+	
 	while(1);
 
 	/* access configuration register 2 */
