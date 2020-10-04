@@ -420,8 +420,6 @@ void dds_init()
 	DDS_DDR  |= (1 << DDS_CS) | (1 << DDS_IO_UPDATE) | (1 << DDS_MODULATION_CS) |
 			(1 << DDS_IOSYNC) | (1 << DDS_MOSI) | (1 << DDS_SCK)| (1 << DDS_RESET);
 	
-	DDS_PORT &= ~(1 << DDS_MODULATION_CS);
-
 	/* set power amplifier pins to output */
 	PA_PORT &= ~((1 << PA_80M) | (1 << PA_2M));
 	PA_DDR |= (1 << PA_80M) | (1 << PA_2M);
@@ -445,13 +443,12 @@ void dds_init()
 	data[0] = (1 << DDS_OSK_ENABLE); //| (1 << DDS_AUTO_OSK_KEYING);
 	data[1] = 0x00;
 	data[2] = (1 << DDS_SDIO_INPUT_ONLY);
-	data[3] = (1 << 7) | (1 << 5) | (1 << 4);
+	data[3] = 0x00;//(1 << 7) | (1 << 5) | (1 << 4);
 
 	dds_write_register(DDS_CFR1, data, 4);
 	dds_io_update();
 
 	dds_powerdown();
-	//DDS_PORT |= (1 << DDS_MODULATION_CS);
 	while(1);
 
 	/* access configuration register 2 */
