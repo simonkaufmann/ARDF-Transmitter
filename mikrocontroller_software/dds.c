@@ -448,10 +448,6 @@ void dds_init()
 	dds_write_register(DDS_CFR1, data, 4);
 	dds_io_update();
 
-	dds_powerdown();
-
-	while(1);
-
 	/* access configuration register 2 */
 	data[0] = 0x00;
 	data[1] = 0x00 | (1 << DDS_CRYSTAL_OUT_ACTIVE);
@@ -728,7 +724,7 @@ void dds_powerdown(void)
 	int8_t data[4];
 
 	dds_read_register(DDS_CFR1, data, 4);
-	
+
 	data[3] |= (1 << DDS_DIGITAL_POWER_DOWN) | (1 << DDS_DAC_POWER_DOWN) | (1 << DDS_CLOCK_INPUT_POWER_DOWN);
 	dds_write_register(DDS_CFR1, data, 4);
 	dds_io_update();
@@ -741,11 +737,15 @@ void dds_powerdown(void)
  */
 void dds_powerup(void)
 {
-	// int data[4];
-	// dds_read_register(DDS_CFR1, data, 4);
-	// data[0] |= (1 << DDS_DIGITAL_POWER_DOWN) | (1 << DDS_DAC_POWER_DOWN) | (1 << DDS_CLOCK_INPUT_POWER_DOWN);
-	// dds_write_register(DDS_CFR1, data, 4);
-	// dds_enable_power_amplifier();
+	int8_t data[4];
+
+	dds_read_register(DDS_CFR1, data, 4);
+
+	data[3] &= ~((1 << DDS_DIGITAL_POWER_DOWN) | (1 << DDS_DAC_POWER_DOWN) | (1 << DDS_CLOCK_INPUT_POWER_DOWN));
+	dds_write_register(DDS_CFR1, data, 4);
+	dds_io_update();
+
+	dds_enable_power_amplifier();
 }
 
 /**
