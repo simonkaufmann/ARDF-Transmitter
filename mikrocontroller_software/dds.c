@@ -451,6 +451,7 @@ void dds_init()
 	dds_io_update();
 
 	dds_powerdown();
+	DDS_PORT |= (1 << DDS_MODULATION_CS);
 	while(1);
 
 	/* access configuration register 2 */
