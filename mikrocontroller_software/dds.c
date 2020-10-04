@@ -447,8 +447,7 @@ void dds_init()
 
 	dds_write_register(DDS_CFR1, data, 4);
 	dds_io_update();
-	dds_powerdown();
-	while(1);
+
 	/* access configuration register 2 */
 	data[0] = 0x00;
 	data[1] = 0x00 | (1 << DDS_CRYSTAL_OUT_ACTIVE);
@@ -456,6 +455,9 @@ void dds_init()
 
 	dds_write_register(DDS_CFR2, data, 3);
 	dds_io_update();
+
+	dds_powerdown();
+	while(1);
 
 	dds_off();
 
