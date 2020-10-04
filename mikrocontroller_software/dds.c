@@ -727,15 +727,13 @@ void dds_powerdown(void)
 {
 	int8_t data[4];
 
-	/* access configuratin register 1 */
-	data[0] = (1 << DDS_OSK_ENABLE); //| (1 << DDS_AUTO_OSK_KEYING);
-	data[1] = 0x00;
-	data[2] = (1 << DDS_SDIO_INPUT_ONLY);
-	data[3] = (1 << 7) | (1 << 5) | (1 << 4);
-
+	dds_read_register(DDS_CFR1, data, 4);
+	
+	data[3] |= (1 << DDS_DIGITAL_POWER_DOWN) | (1 << DDS_DAC_POWER_DOWN) | (1 << DDS_CLOCK_INPUT_POWER_DOWN);
 	dds_write_register(DDS_CFR1, data, 4);
 	dds_io_update();
-	//dds_disable_power_amplifier();
+
+	dds_disable_power_amplifier();
 }
 
 /**
