@@ -445,7 +445,7 @@ void dds_init()
 	data[0] = (1 << DDS_OSK_ENABLE); //| (1 << DDS_AUTO_OSK_KEYING);
 	data[1] = 0x00;
 	data[2] = (1 << DDS_SDIO_INPUT_ONLY);
-	data[3] = 0x00;
+	data[3] = (1 << 3);
 
 	dds_write_register(DDS_CFR1, data, 4);
 	dds_io_update();
