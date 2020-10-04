@@ -210,10 +210,10 @@ int main(void)
 
 	rtc_init();
 
+	rtc_start_oscillator();
+
 	dds_powerdown();
 	while(1);
-
-	rtc_start_oscillator();
 
 	dds_init();
 	morse_init(); /* needs dds */
