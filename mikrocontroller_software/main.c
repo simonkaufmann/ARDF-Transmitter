@@ -206,10 +206,10 @@ int main(void)
 	uart_init();
 	commands_print_welcome_message();
 
+	twi_init();
+
 	dds_powerdown();
 	while(1);
-
-	twi_init();
 
 	rtc_init();
 
