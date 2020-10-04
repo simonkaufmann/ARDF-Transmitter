@@ -776,14 +776,18 @@ void morse_interrupt(void)
 	if (is_on_minute(current_minute) == TRUE)	{
 		morse_start_minute();
 		set_rtc_alarm_morse_off();
+		uart_send_text_sram("morse start\r\n");
 	} else if (is_off_minute(current_minute) == TRUE)	{
 		morse_stop_minute();
 		set_rtc_alarm_morse_on();
+		uart_send_text_sram("morse stop\r\n");
 	} else	{
 		if (get_morse_minute_state() == MORSE_MINUTE_IS_START)	{
 			set_rtc_alarm_morse_off();
+			uart_send_text_sram("morse start2\r\n");
 		} else {
 			set_rtc_alarm_morse_on();
+			uart_send_text_sram("morse stop2\r\n");
 		}
 	}
 }
