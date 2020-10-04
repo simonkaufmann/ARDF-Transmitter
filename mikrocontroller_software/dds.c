@@ -419,6 +419,8 @@ void dds_init()
 	DDS_PORT |= (1 << DDS_CS) | (1 << DDS_MODULATION_CS);
 	DDS_DDR  |= (1 << DDS_CS) | (1 << DDS_IO_UPDATE) | (1 << DDS_MODULATION_CS) |
 			(1 << DDS_IOSYNC) | (1 << DDS_MOSI) | (1 << DDS_SCK)| (1 << DDS_RESET);
+	
+	DDS_PORT &= ~(1 << DDS_MODULATION_CS);
 
 	/* set power amplifier pins to output */
 	PA_PORT &= ~((1 << PA_80M) | (1 << PA_2M));

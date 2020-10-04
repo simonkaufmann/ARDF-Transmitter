@@ -99,7 +99,7 @@ static void reload_int(void)
 
 	dds_init();
 
-	dds_modulation_init();
+	//dds_modulation_init();
 
 	morse_init(); /* needs dds */
 	startup_init(); /* startup needs rtc, morese and dds*/
