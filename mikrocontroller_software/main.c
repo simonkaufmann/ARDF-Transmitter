@@ -215,7 +215,7 @@ int main(void)
 	dds_init();
 
 	morse_init(); /* needs dds */
-	startup_init(); /* startup needs rtc, morese and dds*/
+	startup_init(); /* startup needs rtc, morse and dds*/
 	user_init();
 	rfid_init();
 
