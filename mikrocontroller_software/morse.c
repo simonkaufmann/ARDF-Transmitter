@@ -435,9 +435,11 @@ void morse_start_time()
 	uint8_t current_minute;
 	rtc_get_time(RTC_MINUTE, &current_minute);
 	if (is_on_minute(current_minute) == TRUE)	{
+		uart_send_text_sram("morse-start-time is on minute\r\n");
 		morse_start_minute();
 		set_rtc_alarm_morse_off();
 	} else {
+		uart_send_text_sram("morse-start-time is on minute\r\n");
 		morse_stop_minute();
 		set_rtc_alarm_morse_on();
 	}
