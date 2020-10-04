@@ -208,10 +208,10 @@ int main(void)
 
 	twi_init();
 
+	rtc_init();
+
 	dds_powerdown();
 	while(1);
-
-	rtc_init();
 
 	rtc_start_oscillator();
 
