@@ -727,12 +727,12 @@ void dds_execute_command_buffer()
  */
 void dds_powerdown(void)
 {
-	int data[4];
-	dds_read_register(DDS_CFR1, data, 4);
-	data[3] |= (1 << DDS_DIGITAL_POWER_DOWN) | (1 << DDS_DAC_POWER_DOWN) | (1 << DDS_CLOCK_INPUT_POWER_DOWN);
-	dds_write_register(DDS_CFR1, data, 4);
-	dds_io_update();
-	dds_disable_power_amplifier();
+	// int data[4];
+	// dds_read_register(DDS_CFR1, data, 4);
+	// data[3] |= (1 << DDS_DIGITAL_POWER_DOWN) | (1 << DDS_DAC_POWER_DOWN) | (1 << DDS_CLOCK_INPUT_POWER_DOWN);
+	// dds_write_register(DDS_CFR1, data, 4);
+	// dds_io_update();
+	// dds_disable_power_amplifier();
 }
 
 /**
