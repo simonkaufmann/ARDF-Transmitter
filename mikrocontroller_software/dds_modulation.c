@@ -143,10 +143,10 @@ static uint8_t dds_modulation_test_off(void)
 
 void dds_modulation_init() {
 	// The modulation-dds is off by default
-	dds_modulation_test_off();
+	// dds_modulation_test_off();
 
-	if (dds_get_modulation()==TRUE)
-	{
-		dds_modulation_test_on(); 
-	}
+	// if (dds_get_modulation()==TRUE)
+	// {
+	// 	dds_modulation_test_on(); 
+	// }
 }
