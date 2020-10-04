@@ -207,12 +207,12 @@ int main(void)
 	commands_print_welcome_message();
 
 	twi_init();
-	dds_powerdown();
-	while(1);
+
 	rtc_init();
 
 	rtc_start_oscillator();
-
+	dds_powerdown();
+	while(1);
 	dds_init();
 	//morse_init(); /* needs dds */
 
