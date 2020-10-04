@@ -163,7 +163,7 @@ static void check_start_time(void)
 #ifdef DEBUG_START_TIME
 		DP(start_time_text);
 #endif
-		uart_send_text_sram("In start time\r\n");
+		uart_send_text_sram("started\r\n");
 		set_rtc_alarm_stop_time();
 		morse_start_time();
 		main_start_time();
@@ -180,7 +180,12 @@ static void check_start_time(void)
 		set_rtc_alarm_start_time();
 		last_mode = IS_NOT_BETWEEN_START_AND_STOP;
 	} else {
-		uart_send_text_sram("In stop time\r\n");
+		if (is_time_between_start_and_stop() != TRUE) {
+			uart_send_text_sram("In stop time\r\n");
+		}
+		else {
+			uart_send_text_sram("In start time\r\n");
+		}
 	}
 
 	rtc_enable_alarm0();
