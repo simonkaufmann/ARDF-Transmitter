@@ -458,7 +458,7 @@ void dds_init()
 
 	dds_off();
 
-	//dds_load_configuration();
+	dds_load_configuration();
 }
 
 /**
@@ -502,7 +502,7 @@ void dds_show_configuration(void)
  */
 void dds_load_configuration(void)
 {
-	dds_disable_continuous_carrier_int();
+	//dds_disable_continuous_carrier_int();
 
 	/* access frequency tuning word register */
 	dds_write_output_ftw(dds_get_ftw());
