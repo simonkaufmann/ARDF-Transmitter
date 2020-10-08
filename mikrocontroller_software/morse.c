@@ -663,7 +663,7 @@ uint8_t morse_get_morse_mode(void)
  */
 void morse_enable_continuous_carrier(void)
 {
-	continuous_carrier = TRUE;
+	//continuous_carrier = TRUE;
 	dds_on();
 	update_start();
 }
@@ -777,13 +777,13 @@ void morse_interrupt(void)
 	uint8_t current_minute;
 	rtc_get_time(RTC_MINUTE, &current_minute);
 	if (is_on_minute(current_minute) == TRUE)	{
+		uart_send_text_sram("morse start\r\n");
 		morse_start_minute();
 		set_rtc_alarm_morse_off();
-		uart_send_text_sram("morse start\r\n");
 	} else if (is_off_minute(current_minute) == TRUE)	{
+		uart_send_text_sram("morse stop\r\n");
 		morse_stop_minute();
 		set_rtc_alarm_morse_on();
-		uart_send_text_sram("morse stop\r\n");
 	} else	{
 		if (get_morse_minute_state() == MORSE_MINUTE_IS_START)	{
 			set_rtc_alarm_morse_off();
