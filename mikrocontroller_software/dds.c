@@ -458,7 +458,7 @@ void dds_init()
 
 	dds_off();
 
-	dds_load_configuration();
+	//dds_load_configuration();
 }
 
 /**
