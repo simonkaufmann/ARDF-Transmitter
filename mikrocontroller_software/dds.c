@@ -723,6 +723,7 @@ void dds_execute_command_buffer()
  */
 void dds_powerdown(void)
 {
+	uart_send_text_sram("powerdown\r\n");
 	int8_t data[4];
 
 	dds_read_register(DDS_CFR1, data, 4);
@@ -739,6 +740,7 @@ void dds_powerdown(void)
  */
 void dds_powerup(void)
 {
+	uart_send_text_sram("powerup\r\n");
 	int8_t data[4];
 
 	dds_read_register(DDS_CFR1, data, 4);
