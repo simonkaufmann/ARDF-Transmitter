@@ -163,8 +163,6 @@ static void check_start_time(void)
 #ifdef DEBUG_START_TIME
 		DP(start_time_text);
 #endif
-		dds_powerup();
-		_delay_ms(10);
 		set_rtc_alarm_stop_time();
 		morse_start_time();
 		main_start_time();
