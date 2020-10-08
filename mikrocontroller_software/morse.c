@@ -145,6 +145,7 @@ static void update_start(void)
 			D("new morse\r\n");
 #endif
 			reset = TRUE; /* state of timer has changed */
+			dds_on();
 		}
 	} else	{
 		TIMSK2 &= ~(1 << TOIE2);
@@ -675,88 +676,88 @@ void morse_disable_continuous_carrier(void)
 
 ISR(TIMER2_OVF_vect)
 {
-#ifdef ISR_LED
-	LED_ON();
-#endif
+// #ifdef ISR_LED
+// 	LED_ON();
+// #endif
 
-	TCNT2 = TIMER2_PRELOAD;
-	if (current_morsing_enabled == FALSE || continuous_carrier == TRUE)	{
-		/* so that dds_on is not executed that often (dds has problems
-		 * with too many requests!)
-		 */
-		static uint8_t count;
-		count++;
-		if (count == 0)	{
-			dds_on();
-		}
-	}	else {
-		static uint8_t call_byte_index = 0;
-		static uint8_t call_inner_byte_index = 0;
-		static uint8_t time = 0;
-		static uint16_t morse_unit = 0;
-		if (reset == TRUE)	{
-			/* to ensure that when timer is activated */
-			call_byte_index = 0;
-			call_inner_byte_index = 0;
-			time = 0;
-			morse_unit = 0;
-			reset = FALSE;
-		}
+// 	TCNT2 = TIMER2_PRELOAD;
+// 	if (current_morsing_enabled == FALSE || continuous_carrier == TRUE)	{
+// 		/* so that dds_on is not executed that often (dds has problems
+// 		 * with too many requests!)
+// 		 */
+// 		static uint8_t count;
+// 		count++;
+// 		if (count == 0)	{
+// 			dds_on();
+// 		}
+// 	}	else {
+// 		static uint8_t call_byte_index = 0;
+// 		static uint8_t call_inner_byte_index = 0;
+// 		static uint8_t time = 0;
+// 		static uint16_t morse_unit = 0;
+// 		if (reset == TRUE)	{
+// 			/* to ensure that when timer is activated */
+// 			call_byte_index = 0;
+// 			call_inner_byte_index = 0;
+// 			time = 0;
+// 			morse_unit = 0;
+// 			reset = FALSE;
+// 		}
 
-		if (morse_unit == 0)	{
-			morse_unit = current_morse_unit;
+// 		if (morse_unit == 0)	{
+// 			morse_unit = current_morse_unit;
 
-			if (time == 1)	{
-				/* the space between symbols */
-				dds_off();
-				time--;
-			} else if (time == 0)	{
-				uint8_t inc = FALSE;
-				switch ((current_call[call_byte_index] >> ((3 - call_inner_byte_index) * 2)) & 0b11)	{
-					case 0b00:
-						/* dot */
-						time = 1 + 1;
-						dds_on();
-						inc = TRUE;
-						break;
-					case 0b01:
-						/* dash */
-						time = 3 + 1;
-						dds_on();
-						inc = TRUE;
-						break;
-					case 0b10:
-						/* space letter */
-						time = 3 - 1;
-						inc = TRUE;
-						break;
-					case 0b11:
-						/* space word */
-						time = 7 - 1;
-						call_inner_byte_index = 0;
-						call_byte_index = 0;
-						break;
-				}
-				if (inc == TRUE)	{
-					call_inner_byte_index++;
-					if (call_inner_byte_index > 3)	{
-						call_inner_byte_index = 0;
-						call_byte_index++;
-						if (call_byte_index > CALL_MAX)	{
-							call_byte_index = 0;
-						}
-					}
-				}
-			} else {
-				time--;
-			}
-		} else {
-			morse_unit--;
-		}
-	}
-#ifdef ISR_LED
-	LED_OFF();
-#endif
+// 			if (time == 1)	{
+// 				/* the space between symbols */
+// 				dds_off();
+// 				time--;
+// 			} else if (time == 0)	{
+// 				uint8_t inc = FALSE;
+// 				switch ((current_call[call_byte_index] >> ((3 - call_inner_byte_index) * 2)) & 0b11)	{
+// 					case 0b00:
+// 						/* dot */
+// 						time = 1 + 1;
+// 						dds_on();
+// 						inc = TRUE;
+// 						break;
+// 					case 0b01:
+// 						/* dash */
+// 						time = 3 + 1;
+// 						dds_on();
+// 						inc = TRUE;
+// 						break;
+// 					case 0b10:
+// 						/* space letter */
+// 						time = 3 - 1;
+// 						inc = TRUE;
+// 						break;
+// 					case 0b11:
+// 						/* space word */
+// 						time = 7 - 1;
+// 						call_inner_byte_index = 0;
+// 						call_byte_index = 0;
+// 						break;
+// 				}
+// 				if (inc == TRUE)	{
+// 					call_inner_byte_index++;
+// 					if (call_inner_byte_index > 3)	{
+// 						call_inner_byte_index = 0;
+// 						call_byte_index++;
+// 						if (call_byte_index > CALL_MAX)	{
+// 							call_byte_index = 0;
+// 						}
+// 					}
+// 				}
+// 			} else {
+// 				time--;
+// 			}
+// 		} else {
+// 			morse_unit--;
+// 		}
+// 	}
+// #ifdef ISR_LED
+// 	LED_OFF();
+// #endif
 }
 
 /**
