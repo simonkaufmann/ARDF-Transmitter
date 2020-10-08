@@ -558,6 +558,7 @@ uint8_t dds_get_amplitude_percentage(void)
  */
 uint8_t dds_on(void)
 {
+	uart_send_text_sram("dds_off\n");
 #ifdef DDS_FUNC_IS_LED_STATE
 	LED_ON();
 #endif
@@ -591,6 +592,7 @@ uint8_t dds_on(void)
  */
 uint8_t dds_off(void)
 {
+	uart_send_text_sram("dds_off\n");
 #ifdef DDS_FUNC_IS_LED_STATE
 	LED_OFF();
 #endif
