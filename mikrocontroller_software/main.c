@@ -340,7 +340,7 @@ void main_init()
  */
 void main_start_time()
 {
-	//dds_powerup();
+	dds_powerup();
 	is_started = TRUE;
 }
 
@@ -350,7 +350,7 @@ void main_start_time()
 void main_stop_time()
 {
 	// do not powerdown dds because then continuous carrier is not possible
-	//dds_powerdown();
+	dds_powerdown();
 	is_started = FALSE;
 }
 
