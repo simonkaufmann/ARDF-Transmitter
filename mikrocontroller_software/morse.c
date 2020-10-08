@@ -324,8 +324,9 @@ static uint8_t get_morse_minute_state(void)
 static void morse_start_minute(void)
 {
 	morse_started |= (1 << MORSE_STARTED_MINUTE);
-	dds_powerup();
-	update_start();
+	// dds_powerup();
+	// update_start();
+	dds_enable_continuous_carrier_2m();
 }
 
 /**
