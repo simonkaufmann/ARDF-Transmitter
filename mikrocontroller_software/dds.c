@@ -811,32 +811,32 @@ void dds_disable_continuous_carrier(void)
 
 ISR(TIMER0_OVF_vect)
 {
-	TCNT0 = TIMER0_PRELOAD;
-#if defined ISR_LED || defined ISR_LED_MODULATION
-	LED_ON();
-#endif
+// 	TCNT0 = TIMER0_PRELOAD;
+// #if defined ISR_LED || defined ISR_LED_MODULATION
+// 	LED_ON();
+// #endif
 
-	static uint8_t overflow_count = 0;
-	overflow_count++;
-	if (overflow_count == TIMER0_OVERFLOW_SET_SPI_OFF)	{
-		SPI_set_state(SPI_OFF); /* rfid should not send any more */
-	} else if (overflow_count >= TIMER0_OVERFLOW_NUMBER) {
-		static volatile uint8_t x = 0;
-		if (++x == SIN_VALUES)	{
-				x = 0;
-		}
-		if (dds_write_amplitude_isr(sin_table_byte0[x], sin_table_byte1[x]) == TRUE)	{
-#ifdef SPI_NOT_FREE_LED
-			LED_ON();
-#endif
-			SPI_set_state(SPI_ON);
-#ifdef SPI_NOT_FREE_LED
-			LED_OFF()();
-#endif
-		}
-		overflow_count = 0;
-	}
-#if defined ISR_LED || defined ISR_LED_MODULATION
-	LED_OFF();
-#endif
+// 	static uint8_t overflow_count = 0;
+// 	overflow_count++;
+// 	if (overflow_count == TIMER0_OVERFLOW_SET_SPI_OFF)	{
+// 		SPI_set_state(SPI_OFF); /* rfid should not send any more */
+// 	} else if (overflow_count >= TIMER0_OVERFLOW_NUMBER) {
+// 		static volatile uint8_t x = 0;
+// 		if (++x == SIN_VALUES)	{
+// 				x = 0;
+// 		}
+// 		if (dds_write_amplitude_isr(sin_table_byte0[x], sin_table_byte1[x]) == TRUE)	{
+// #ifdef SPI_NOT_FREE_LED
+// 			LED_ON();
+// #endif
+// 			SPI_set_state(SPI_ON);
+// #ifdef SPI_NOT_FREE_LED
+// 			LED_OFF()();
+// #endif
+// 		}
+// 		overflow_count = 0;
+// 	}
+// #if defined ISR_LED || defined ISR_LED_MODULATION
+// 	LED_OFF();
+// #endif
 }
