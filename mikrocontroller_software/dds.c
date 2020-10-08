@@ -558,7 +558,7 @@ uint8_t dds_get_amplitude_percentage(void)
  */
 uint8_t dds_on(void)
 {
-	uart_send_text_sram("dds_off\n");
+	uart_send_text_sram("dds_on\n");
 #ifdef DDS_FUNC_IS_LED_STATE
 	LED_ON();
 #endif
@@ -723,15 +723,15 @@ void dds_execute_command_buffer()
  */
 void dds_powerdown(void)
 {
-	int8_t data[4];
+	// int8_t data[4];
 
-	dds_read_register(DDS_CFR1, data, 4);
+	// dds_read_register(DDS_CFR1, data, 4);
 
-	data[3] |= (1 << DDS_DIGITAL_POWER_DOWN) | (1 << DDS_DAC_POWER_DOWN) | (1 << DDS_CLOCK_INPUT_POWER_DOWN);
-	dds_write_register(DDS_CFR1, data, 4);
-	dds_io_update();
+	// data[3] |= (1 << DDS_DIGITAL_POWER_DOWN) | (1 << DDS_DAC_POWER_DOWN) | (1 << DDS_CLOCK_INPUT_POWER_DOWN);
+	// dds_write_register(DDS_CFR1, data, 4);
+	// dds_io_update();
 
-	dds_disable_power_amplifier();
+	// dds_disable_power_amplifier();
 }
 
 /**
@@ -739,17 +739,17 @@ void dds_powerdown(void)
  */
 void dds_powerup(void)
 {
-	int8_t data[4];
+	// int8_t data[4];
 
-	dds_read_register(DDS_CFR1, data, 4);
+	// dds_read_register(DDS_CFR1, data, 4);
 
-	data[3] &= ~((1 << DDS_DIGITAL_POWER_DOWN) | (1 << DDS_DAC_POWER_DOWN) | (1 << DDS_CLOCK_INPUT_POWER_DOWN));
-	dds_write_register(DDS_CFR1, data, 4);
-	dds_io_update();
+	// data[3] &= ~((1 << DDS_DIGITAL_POWER_DOWN) | (1 << DDS_DAC_POWER_DOWN) | (1 << DDS_CLOCK_INPUT_POWER_DOWN));
+	// dds_write_register(DDS_CFR1, data, 4);
+	// dds_io_update();
 
-	//_delay_ms(2);
+	// //_delay_ms(2);
 
-	dds_enable_power_amplifier();
+	// dds_enable_power_amplifier();
 }
 
 /**
