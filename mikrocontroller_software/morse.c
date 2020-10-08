@@ -145,11 +145,13 @@ static void update_start(void)
 			D("new morse\r\n");
 #endif
 			reset = TRUE; /* state of timer has changed */
-			dds_on();
+			//dds_on();
+			dds_enable_continuous_carrier_2m();
 		}
 	} else	{
 		TIMSK2 &= ~(1 << TOIE2);
-		dds_off();
+		//dds_off();
+		dds_disable_continuous_carrier();
 	}
 }
 
