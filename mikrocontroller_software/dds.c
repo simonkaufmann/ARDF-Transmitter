@@ -47,10 +47,14 @@
  * define bits in DDS registers
  */
 /* DDS_CFR1 byte 3 */
-#define DDS_OSK_ENABLE		1
-#define DDS_AUTO_OSK_KEYING	0
+#define DDS_OSK_ENABLE			1
+#define DDS_AUTO_OSK_KEYING		0
 /* DDS_CFR1 byte 1 */
 #define DDS_SDIO_INPUT_ONLY		1
+/* DDS_CFR0 byte 0 */
+#define DDS_DIGITAL_POWER_DOWN	7
+#define DDS_DAC_POWER_DOWN		5
+#define DDS_CLOCK_INPUT_POWER_DOWN	4
 /* DDS_CFR2 byte 1 */
 #define DDS_CRYSTAL_OUT_ACTIVE	1
 
@@ -101,6 +105,41 @@ static uint8_t continuous_carrier = CONTINUOUS_CARRIER_OFF;
  */
 static inline void wait_spi(void)	{
 	while ((SPSR & (1 << SPIF)) == 0);
+}
+
+/**
+ * dds_disable_power_amplifier - turn off power amplifiers
+ *
+ * 		Both power amplifiers are turned off
+ */
+static void dds_disable_power_amplifier()
+{
+#ifdef NEW_PROTOTYPE
+        /* turn off the amplifier */
+        PA_PORT &= ~(1 << PA_80M);
+        PA_PORT &= ~(1 << PA_2M);
+#endif
+}
+
+
+/**
+ * dds_enable_power_amplifier - turn on power amplifier 80m/2m
+ *
+ *		Either 80m or 2m power amplifier is activated depending
+ *		on configuration setting        
+ */
+static void dds_enable_power_amplifier()
+{
+#ifdef NEW_PROTOTYPE
+        /* turn on the amplifier */
+        if (dds_get_frequency() > DDS_FREQ_2M_80M_LIMIT)        {
+                PA_PORT &= ~(1 << PA_80M);
+                PA_PORT |= (1 << PA_2M);
+        } else {
+                PA_PORT &= ~(1 << PA_2M);
+                PA_PORT |= (1 << PA_80M);
+        }
+#endif
 }
 
 /**
@@ -722,8 +761,6 @@ void dds_powerup(void)
 	dds_io_update();
 
 	_delay_ms(3);
-
-	dds_init();
 
 	dds_enable_power_amplifier();
 }
