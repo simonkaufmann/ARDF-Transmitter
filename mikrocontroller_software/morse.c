@@ -150,8 +150,7 @@ static void update_start(void)
 		}
 	} else	{
 		TIMSK2 &= ~(1 << TOIE2);
-		//dds_off();
-		dds_disable_continuous_carrier();
+		dds_off();
 	}
 }
 
