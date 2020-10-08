@@ -723,14 +723,14 @@ void dds_execute_command_buffer()
  */
 void dds_powerdown(void)
 {
-	// uart_send_text_sram("powerdown\r\n");
-	// int8_t data[4];
+	uart_send_text_sram("powerdown\r\n");
+	int8_t data[4];
 
-	// dds_read_register(DDS_CFR1, data, 4);
+	dds_read_register(DDS_CFR1, data, 4);
 
-	// data[3] |= (1 << DDS_DIGITAL_POWER_DOWN) | (1 << DDS_DAC_POWER_DOWN) | (1 << DDS_CLOCK_INPUT_POWER_DOWN);
-	// dds_write_register(DDS_CFR1, data, 4);
-	// dds_io_update();
+	data[3] |= (1 << DDS_DIGITAL_POWER_DOWN) | (1 << DDS_DAC_POWER_DOWN) | (1 << DDS_CLOCK_INPUT_POWER_DOWN);
+	dds_write_register(DDS_CFR1, data, 4);
+	dds_io_update();
 
 	dds_disable_power_amplifier();
 }
@@ -740,16 +740,18 @@ void dds_powerdown(void)
  */
 void dds_powerup(void)
 {
-	// uart_send_text_sram("powerup\r\n");
-	// int8_t data[4];
+	uart_send_text_sram("powerup\r\n");
+	int8_t data[4];
 
-	// dds_read_register(DDS_CFR1, data, 4);
+	dds_read_register(DDS_CFR1, data, 4);
 
-	// data[3] &= ~((1 << DDS_DIGITAL_POWER_DOWN) | (1 << DDS_DAC_POWER_DOWN) | (1 << DDS_CLOCK_INPUT_POWER_DOWN));
-	// dds_write_register(DDS_CFR1, data, 4);
-	// dds_io_update();
+	data[3] &= ~((1 << DDS_DIGITAL_POWER_DOWN) | (1 << DDS_DAC_POWER_DOWN) | (1 << DDS_CLOCK_INPUT_POWER_DOWN));
+	dds_write_register(DDS_CFR1, data, 4);
+	dds_io_update();
 
-	// //_delay_ms(2);
+	_delay_ms(3);
+
+	dds_init();
 
 	dds_enable_power_amplifier();
 }
