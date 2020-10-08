@@ -101,7 +101,7 @@ static void reload_int(void)
 
 	dds_modulation_init();
 
-	morse_init(); /* needs dds */
+	//morse_init(); /* needs dds */
 	startup_init(); /* startup needs rtc, morese and dds*/
 
 	sei();
@@ -213,7 +213,7 @@ int main(void)
 	rtc_start_oscillator();
 
 	dds_init();
-	morse_init(); /* needs dds */
+	//morse_init(); /* needs dds */
 	startup_init(); /* startup needs rtc, morese and dds*/
 	user_init();
 	rfid_init();
