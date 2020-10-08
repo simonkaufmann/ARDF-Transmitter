@@ -773,6 +773,7 @@ void dds_powerup(void)
  */
 void dds_enable_continuous_carrier_2m(void)
 {
+	dds_powerup();
 	PA_PORT &= ~(1 << PA_80M);
 	PA_PORT |= (1 << PA_2M);
 	dds_write_output_ftw(FREQ_TO_FTW(DDS_DEFAULT_FREQUENCY_2M));
