@@ -340,7 +340,7 @@ void main_init()
  */
 void main_start_time()
 {
-	dds_powerup();
+	//dds_powerup();
 	is_started = TRUE;
 }
 
