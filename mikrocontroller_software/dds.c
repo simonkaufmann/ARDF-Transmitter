@@ -402,6 +402,7 @@ static void dds_disable_continuous_carrier_int(void)
 {
 	morse_disable_continuous_carrier();
 	continuous_carrier = CONTINUOUS_CARRIER_OFF;
+	dds_powerdown();
 }
 
 /*

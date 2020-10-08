@@ -167,6 +167,7 @@ static void check_start_time(void)
 		morse_start_time();
 		main_start_time();
 		user_start_time();
+		dds_powerup();
 		last_mode = IS_BETWEEN_START_AND_STOP;
 	} else if (is_time_between_start_and_stop() != TRUE && last_mode != IS_NOT_BETWEEN_START_AND_STOP)	{
 #ifdef DEBUG_START_TIME
@@ -175,6 +176,7 @@ static void check_start_time(void)
 		morse_stop_time();
 		main_stop_time();
 		user_stop_time();
+		dds_powerdown();
 		set_rtc_alarm_start_time();
 		last_mode = IS_NOT_BETWEEN_START_AND_STOP;
 	}
